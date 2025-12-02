@@ -1,0 +1,23 @@
+name: IFSOSITY Auto Runner
+
+on:
+  workflow_dispatch:
+  push:
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Install Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+
+      - name: Run IFSOSITY Tool
+        run: |
+          chmod +x run.sh
+          ./run.sh
