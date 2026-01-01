@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+<meta charset="UTF-8">
+<title>SpeedNet Rewards</title>
+
+<style>
+* {
+    box-sizing: border-box;
+    font-family: Tahoma, Arial;
+}
+
+body {
+    margin: 0;
+    background: linear-gradient(135deg, #141e30, #243b55);
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    direction: rtl;
+    color: #fff;
+}
+
+.container {
+    background: rgba(0,0,0,0.7);
+    padding: 25px;
+    border-radius: 18px;
+    width: 100%;
+    max-width: 420px;
+    box-shadow: 0 0 25px rgba(0,0,0,0.8);
+    text-align: center;
+}
+
+input, button {
+    width: 100%;
+    padding: 12px;
+    margin-top: 10px;
+    border-radius: 10px;
+    border: none;
+    font-size: 16px;
+}
+
+button {
+    background: #00c6ff;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+button:hover {
+    background: #00ffcc;
+}
+
+.hidden {
+    display: none;
+}
+
+.banner {
+    margin-top: 15px;
+    padding: 10px;
+    border-radius: 10px;
+    background: gold;
+    color: #000;
+    font-weight: bold;
+}
+
+.shop button {
+    background: orange;
+}
+</style>
+</head>
+<body>
+
+<!-- تسجيل الدخول -->
+<div class="container" id="loginBox">
+    <h2>🔐 تسجيل الدخول</h2>
+    <input type="text" id="username" placeholder="اسم المستخدم">
+    <button onclick="login()">دخول</button>
+</div>
+
+<!-- التطبيق -->
+<div class="container hidden" id="appBox">
+    <h2 id="welcome"></h2>
+
+    <p>📶 سرعتك:</p>
+    <h3 id="speed">---</h3>
+
+    <button onclick="testSpeed()">قياس سرعة الإنترنت</button>
+
+    <p>⭐ النقاط: <span id="points">0</span></p>
+
+    <div id="bannerBox"></div>
+
+    <div class="shop">
+        <h3>🛒 المتجر</h3>
+        <button onclick="buyBanner()">شراء بنر (50 نقطة)</button>
+    </div>
+</div>
+
+<script>
+let user = "";
+let points = 0;
+let hasBanner = false;
+
+// تحميل البيانات
+if (localStorage.user) {
+    user = localStorage.user;
+    points = parseInt(localStorage.points || 0);
+    hasBanner = localStorage.banner === "true";
+    showApp();
+}
+
+function login() {
+    const name = document.getElementById("username").value.trim();
+    if (name === "") return alert("اكتب اسمك");
+
+    user = name;
+    points = 0;
+    hasBanner = false;
+
+    save();
+    showApp();
+}
+
+function showApp() {
+    document.getElementById("loginBox").classList.add("hidden");
+    document.getElementById("appBox").classList.remove("hidden");
+    document.getElementById("welcome").innerText = "👋 مرحبًا " + user;
+    updateUI();
+}
+
+function testSpeed() {
+    // محاكاة سرعة إنترنت
+    let speed = (Math.random() * 90 + 10).toFixed(1); // Mbps
+    document.getElementById("speed").innerText = speed + " Mbps";
+
+    if (speed >= 30) {
+        points += 10;
+        alert("🔥 سرعة ممتازة! +10 نقاط");
+    } else {
+        alert("❌ السرعة ضعيفة، لا نقاط");
+    }
+
+    save();
+    updateUI();
+}
+
+function buyBanner() {
+    if (hasBanner) return alert("أنت تملك بنر بالفعل");
+    if (points < 50) return alert("نقاط غير كافية");
+
+    points -= 50;
+    hasBanner = true;
+
+    save();
+    updateUI();
+}
+
+function updateUI() {
+    document.getElementById("points").innerText = points;
+
+    const bannerBox = document.getElementById("bannerBox");
+    if (hasBanner) {
+        bannerBox.innerHTML = '<div class="banner">🏆 عضو مميز</div>';
+    } else {
+        bannerBox.innerHTML = "";
+    }
+}
+
+function save() {
+    localStorage.user = user;
+    localStorage.points = points;
+    localStorage.banner = hasBanner;
+}
+</script>
+
+</body>
+</html>
